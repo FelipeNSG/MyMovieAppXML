@@ -9,16 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mymovieappxml.R
 
-class SliderAdapter(var list: List<SliderModel>, var context: Context)
-    :RecyclerView.Adapter<SliderAdapter.ViewHolder>() {
-        class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
+class SliderAdapter(var list: List<SliderModel>, var context: Context) :
+    RecyclerView.Adapter<SliderAdapter.ViewHolder>() {
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-            val sliderImage: ImageView = itemView.findViewById(R.id.slider_image)
+        val sliderImage: ImageView = itemView.findViewById(R.id.slider_image)
 
-        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.slider_layout, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.slider_layout, parent, false)
 
         return ViewHolder(view)
     }
@@ -28,14 +29,11 @@ class SliderAdapter(var list: List<SliderModel>, var context: Context)
         Glide.with(context.applicationContext)
             .load(currentItem.image)
             .into(holder.sliderImage)
-
         holder.itemView.setOnClickListener {
-
         }
-
     }
 
     override fun getItemCount(): Int {
-       return list.size
+        return list.size
     }
 }

@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
 
     lateinit var isViewImage: ViewPager2
-    var isList: List<SliderModel> = emptyList()
+    lateinit var isList: MutableList<SliderModel>
     lateinit var adapter: SliderAdapter
     val sliderHandler = Handler(Looper.myLooper()!!)
 
@@ -32,12 +32,11 @@ class MainActivity : AppCompatActivity() {
 
         isViewImage = findViewById(R.id.is_view_image)
         isList = mutableListOf()
-        adapter = SliderAdapter(isList, this)
-        isViewImage.adapter = adapter
-        /*isViewImage.clipChildren = false
+
+        isViewImage.clipChildren = false
         isViewImage.clipToPadding = false
-        isViewImage.offscreenPageLimit = 3*/
-      /*  isViewImage.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+        isViewImage.offscreenPageLimit = 3
+        isViewImage.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
         val compositePageTransformer = CompositePageTransformer()
         compositePageTransformer.addTransformer(MarginPageTransformer(40))
@@ -51,34 +50,33 @@ class MainActivity : AppCompatActivity() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 sliderHandler.removeCallbacks(sliderRunnable)
-                sliderHandler.postDelayed(sliderRunnable, 2000)
+                sliderHandler.postDelayed(sliderRunnable, 4000)
+
                 if (position == isList.size - 2) {
                     isViewImage.post(runnable)
                 }
+                adapter.notifyDataSetChanged()
+            }
+        })
 
-            }
-        })
-        */
         homeViewModel.listUpcoming.observe(this, Observer { listOfUpComingMovies ->
-            if (listOfUpComingMovies.isNotEmpty()) {
-                isList = listOfUpComingMovies.toMutableList()
-                println(isList.size)
-                println(isList[0].image)
-            }
-            adapter.notifyDataSetChanged()
+            isList = listOfUpComingMovies.toMutableList()
+            adapter = SliderAdapter(isList, this)
+            isViewImage.adapter = adapter
+
         })
-        homeViewModel.getListUpcomingSliderModel()
+        homeViewModel.listUpcoming
     }
 
-    /*val sliderRunnable = Runnable { isViewImage.currentItem = isViewImage.currentItem + 1 }
+    val sliderRunnable = Runnable { isViewImage.currentItem = isViewImage.currentItem + 1 }
     val runnable = Runnable {
         isList.addAll(isList)
         adapter.notifyDataSetChanged()
-    }*/
+    }
 
     override fun onPause() {
         super.onPause()
-        /*sliderHandler.postDelayed(sliderRunnable, 500)*/
+        sliderHandler.postDelayed(sliderRunnable, 500)
     }
 
 }

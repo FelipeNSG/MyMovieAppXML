@@ -14,9 +14,11 @@ class HomeViewModel : ViewModel() {
     val listUpcoming: LiveData<List<SliderModel>>
         get() = _listUpcoming
 
+init {
+    getListUpcomingSliderModel()
+}
 
-
-     fun getListUpcomingSliderModel() {
+    private fun getListUpcomingSliderModel() {
         viewModelScope.launch {
             val movies = MoviesRepository.getUpComingMoviesSliderModel().take(4)
             _listUpcoming.value = movies
