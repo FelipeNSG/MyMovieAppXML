@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">MyMovieAppXML</string>
+    <string name="categories">Categories</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="play_now">Play Now</string>
+    <string name="top_rate">Top Rate</string>
+    <string name="most_popular_series">Most Popular Series</string>
+    <string name="search_view">Search</string>
+    <string name="home">Home </string>
+    <string name="search">Search</string>
+    <string name="download_bottom_nav">Download</string>
+    <string name="favorites_menu">Favorites</string>
 </resources>

@@ -2,4 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="containerColor">#FF1F1D2B</color>
+    <color name="greyColor">#FF92929D</color>
+    <color name="blueBottomNavigation">#FF12CDD9</color>
+    <color name="lightBlack">#FF252836</color>
 </resources>

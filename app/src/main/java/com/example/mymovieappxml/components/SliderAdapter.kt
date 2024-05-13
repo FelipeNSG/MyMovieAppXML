@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mymovieappxml.R
 
-class SliderAdapter(var list: List<SliderModel>, var context: Context) :
+class SliderAdapter(var list: List<SliderModel>, private var context: Context) :
     RecyclerView.Adapter<SliderAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -25,7 +25,7 @@ class SliderAdapter(var list: List<SliderModel>, var context: Context) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        var currentItem = list[position]
+        val currentItem = list[position]
         Glide.with(context.applicationContext)
             .load(currentItem.image)
             .into(holder.sliderImage)
