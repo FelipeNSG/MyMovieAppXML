@@ -10,4 +10,11 @@
     <string name="search">Search</string>
     <string name="download_bottom_nav">Download</string>
     <string name="favorites_menu">Favorites</string>
+    <string name="favorite_icon">Favorite</string>
+    <string name="arrow_back">ArrowBack</string>
+    <string name="iconBackArrow">iconBackArrow</string>
+    <string name="unknownTitle">Unknown</string>
+    <string name="iconFavorite">iconFavorite</string>
+    <string name="calendar">calendar</string>
+    <string name="play_button">Play</string>
 </resources>
