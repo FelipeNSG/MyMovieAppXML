@@ -17,4 +17,10 @@
     <string name="iconFavorite">iconFavorite</string>
     <string name="calendar">calendar</string>
     <string name="play_button">Play</string>
+    <string name="tag_line">Tag Line</string>
+    <string name="story_line">Story Line</string>
+    <string name="cast">Cast</string>
+    <string name="gallery">Gallery</string>
+    <string name="imageBackground">imageBackground</string>
+    <string name="movie">movie</string>
 </resources>

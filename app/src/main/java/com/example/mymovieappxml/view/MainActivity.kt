@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
     private var playNowMovies: MutableList<Movie> = mutableListOf()
     private var topRateMovies: MutableList<Movie> = mutableListOf()
     private var popularSeries: MutableList<Series> = mutableListOf()
-
     lateinit var adapter: SliderAdapter
     val sliderHandler = Handler(Looper.myLooper()!!)
     private lateinit var movieAdapterPopularMovies: MovieAdapter

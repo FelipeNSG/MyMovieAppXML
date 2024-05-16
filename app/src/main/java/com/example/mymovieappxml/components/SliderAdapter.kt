@@ -8,6 +8,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mymovieappxml.R
+import com.example.mymovieappxml.view.MainActivity
 
 class SliderAdapter(var list: List<SliderModel>, private var context: Context) :
     RecyclerView.Adapter<SliderAdapter.ViewHolder>() {
