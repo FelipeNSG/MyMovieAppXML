@@ -8,18 +8,30 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".view.MainActivity2">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        android:layout_width="86dp"
+        android:layout_height="69dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    </ProgressBar>
+
     <ImageView
         android:id="@+id/imageFromTheMovieOrSeriesForScreenBackground"
         android:layout_width="match_parent"
         android:layout_height="555dp"
-        android:background="@color/greyColor"
         android:contentDescription="@string/imageBackground"
-        android:alpha="0.5"
+        android:alpha="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
     </ImageView>
 
     <ScrollView
+
         android:id="@+id/scrollableScreenDetails"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -350,10 +362,12 @@
                     android:layout_marginTop="7dp"
                     android:fontFamily="@font/montserrat_regular"
                     android:maxLines="10"
-                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id elit in tellus dapibus maximus nec sit amet velit. Quisque non quam iaculis, condimentum nisi a, cursus sem. Sed non lorem mattis, fermentum lectus id, venenatis magna. Nullam viverra lobortis sagittis. Curabitur fringilla volutpat pharetra. In hac habitasse platea dictumst. Fusce iaculis consequat est, sit amet efficitur nunc efficitur ut. Pellentesque et libero vel metus luctus ultrices id quis ex. Fusce condimentum arcu vitae orci euismod viverra."
                     android:textColor="@color/white"
                     android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    tools:text = "@tools:sample/lorem/random"
+                    />
                 <TextView
                     android:id="@+id/castTitle"
                     android:layout_width="wrap_content"
@@ -397,5 +411,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

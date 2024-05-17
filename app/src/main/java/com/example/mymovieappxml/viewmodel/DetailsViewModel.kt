@@ -32,7 +32,7 @@ fun titleTransform(title:String):String {
     }
 }
 
-    private fun getMovieAndSeriesDetails(id:Int, type:String) {
+     fun getMovieAndSeriesDetails(id:Int, type:String) {
         viewModelScope.launch {
             if (type == Type.MOVIE.type) {
                 val movieDetails = repository.getMovieDetails(id)
