@@ -1,5 +1,8 @@
 package com.example.mymovieappxml.view
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
@@ -7,9 +10,16 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mymovieappxml.R
+import com.example.mymovieappxml.components.CastAdapter
+import com.example.mymovieappxml.components.GalleryAdapter
 import com.example.mymovieappxml.databinding.ActivityMain2Binding
+import com.example.mymovieappxml.movies.Movie
+import com.example.mymovieappxml.movies.MovieAndSeriesImagePoster
+import com.example.mymovieappxml.movies.MovieCast
 import com.example.mymovieappxml.viewmodel.DetailsViewModel
 
 
@@ -18,10 +28,34 @@ class MainActivity2 : AppCompatActivity() {
     private lateinit var binding: ActivityMain2Binding
     /*private var movieOrSeriesDetail: DetailsViewModel.MovieDetailsState = DetailsViewModel.MovieDetailsState.Loading*/
     private val detailsViewModel: DetailsViewModel by viewModels()
+    private var castList: MutableList<MovieCast> = mutableListOf()
+    private var galleryImages: MutableList<MovieAndSeriesImagePoster> = mutableListOf()
+    private lateinit var  castAdapter:CastAdapter
+    private lateinit var  galleryAdapter:GalleryAdapter
+
+
+    private fun initRecyclerViewCastList() {
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerCast)
+        recyclerView.layoutManager = LinearLayoutManager(
+            this, RecyclerView.HORIZONTAL, false
+        )
+        recyclerView.adapter = castAdapter
+    }
+
+    private fun initRecyclerViewGallery() {
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerGallery)
+        recyclerView.layoutManager = LinearLayoutManager(
+            this, RecyclerView.HORIZONTAL, false
+        )
+        recyclerView.adapter = galleryAdapter
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         this.resources.getString(R.string.movie)
         super.onCreate(savedInstanceState)
         binding = ActivityMain2Binding.inflate(layoutInflater)
+
+
         fun screenLogin(){
             binding.progressBar.isVisible = true
             binding.imageFromTheMovieOrSeriesForScreenBackground.isVisible = false
@@ -54,6 +88,8 @@ class MainActivity2 : AppCompatActivity() {
            when(movieOrSeriesDetail){
                DetailsViewModel.MovieDetailsState.Loading -> {
                  screenLogin()
+                   CastAdapter(emptyList())
+                   GalleryAdapter(emptyList())
                }
 
                is DetailsViewModel.MovieDetailsState.Success -> {
@@ -76,6 +112,14 @@ class MainActivity2 : AppCompatActivity() {
                        this.text = details._voteAverage.toString().take(3)
                    }
                    findViewById<TextView>(binding.storyLineDescription.id).apply { this.text = details._overview }
+
+                   castList = movieOrSeriesDetail.credits.toMutableList()
+                   castAdapter =  CastAdapter(castList)
+                   initRecyclerViewCastList()
+
+                   galleryImages = movieOrSeriesDetail.imagePoster.toMutableList()
+                   galleryAdapter = GalleryAdapter(galleryImages)
+                   initRecyclerViewGallery()
                }
            }
         })
