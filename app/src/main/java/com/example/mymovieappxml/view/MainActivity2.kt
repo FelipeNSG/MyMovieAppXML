@@ -1,6 +1,7 @@
 package com.example.mymovieappxml.view
 
 import android.app.Dialog
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +27,6 @@ import com.example.mymovieappxml.viewmodel.DetailsViewModel
 
 class MainActivity2 : AppCompatActivity() {
     private lateinit var binding: ActivityMain2Binding
-    /*private var movieOrSeriesDetail: DetailsViewModel.MovieDetailsState = DetailsViewModel.MovieDetailsState.Loading*/
     private val detailsViewModel: DetailsViewModel by viewModels()
     private var castList: MutableList<MovieCast> = mutableListOf()
     private var galleryImages: MutableList<MovieAndSeriesImagePoster> = mutableListOf()
@@ -55,7 +55,6 @@ class MainActivity2 : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMain2Binding.inflate(layoutInflater)
 
-
         fun screenLogin(){
             binding.progressBar.isVisible = true
             binding.imageFromTheMovieOrSeriesForScreenBackground.isVisible = false
@@ -65,10 +64,10 @@ class MainActivity2 : AppCompatActivity() {
         setContentView(binding.root)
         val bundle = intent.extras
         val type = bundle?.getString("type")?:"movie"
-        val id = bundle?.getInt("id")?: Int.MIN_VALUE
+        val id = bundle?.getString("id")?: "Unknown"
         val titleData = bundle?.getString("title")
         val imageBackgroundImageUrl = bundle?.getString("imageBackground")
-        detailsViewModel.getMovieAndSeriesDetails(id,type)
+        detailsViewModel.getMovieAndSeriesDetails(id.toInt(),type)
 
         findViewById<TextView>(binding.movieTitle.id).apply { this.text = detailsViewModel.titleTransform(titleData?:"Unknown") }
         findViewById<ImageView>(binding.imageFromTheMovieOrSeriesForScreenBackground.id).apply {
@@ -93,17 +92,32 @@ class MainActivity2 : AppCompatActivity() {
                }
 
                is DetailsViewModel.MovieDetailsState.Success -> {
+                  val backButton = binding.backArrowAppBar
+                   backButton.setOnClickListener {
+                       finish()
+                   }
                    binding.progressBar.isVisible = false
                    binding.imageFromTheMovieOrSeriesForScreenBackground.isVisible = true
                    binding.scrollableScreenDetails.isVisible = true
                    val details = (movieOrSeriesDetail).details
-                   findViewById<TextView>(binding.premiereDate.id).apply { this.text = details._releaseDate }
-                   findViewById<TextView>(binding.durationMovieOrSeries.id).apply { this.text = details._runtime.toString().plus(" minutes") }
+
+
                    if (details._type == "movie"){
+                       findViewById<TextView>(binding.premiereDate.id).apply { this.text = details._releaseDate }
+                       findViewById<TextView>(binding.durationMovieOrSeries.id).apply { this.text = details._runtime.toString().plus(" minutes") }
                        findViewById<TextView>(binding.categoriesDescription.id).apply { this.text = details._genre[0].name }
                    }
                    else{
-                       findViewById<TextView>(binding.categoriesDescription.id).apply { this.text = details._genres[0].name }
+                       findViewById<TextView>(binding.premiereDate.id).apply{ this.text = details._firstAirDate.take(4) }
+                       if (details._episodeRunTime.isNotEmpty() ){findViewById<TextView>(binding.durationMovieOrSeries.id)
+                           .apply { this.text = details._episodeRunTime[0].toString().plus(" minutes") }}
+                       else{
+                           findViewById<TextView>(binding.durationMovieOrSeries.id)
+                               .apply { this.text = getString(R.string.unknownTitle) }
+                       }
+                       findViewById<TextView>(binding.categoriesDescription.id).apply {
+                           this.text = details._genres[0].name
+                       }
                    }
                    findViewById<TextView>(binding.tagLineDescription.id).apply {
                        this.text = details._tagline
@@ -123,8 +137,6 @@ class MainActivity2 : AppCompatActivity() {
                }
            }
         })
-
-
     }
 
 

@@ -16,11 +16,10 @@ class GalleryAdapter(private val movieAndSeriesImagePosterList: List<MovieAndSer
     RecyclerView.Adapter<GalleryViewHolder>() {
     private lateinit var context: Context
     private val movieAndSeriesImagePosterListGallery =  if (movieAndSeriesImagePosterList.size >= 10)
-    { movieAndSeriesImagePosterList.filter { it.iso6391 == "en" }.take(10) }
+    { movieAndSeriesImagePosterList.shuffled().filter { it.iso6391 == "en" }.take(10) }
     else {
         movieAndSeriesImagePosterList
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -46,6 +45,9 @@ class GalleryAdapter(private val movieAndSeriesImagePosterList: List<MovieAndSer
         mDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         holder.itemView.setOnClickListener{
             mDialog.show()
+            imagePopup.setOnClickListener {
+                mDialog.hide()
+            }
         }
 
     }

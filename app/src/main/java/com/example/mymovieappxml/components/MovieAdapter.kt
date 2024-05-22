@@ -27,7 +27,7 @@ class MovieAdapter(private val moviesList: List<Movie>) : RecyclerView.Adapter<M
             intent.putExtra("title", item.title )
             intent.putExtra("imageBackground", imageMovieUrl(item.url))
             intent.putExtra("type", item.type)
-            intent.putExtra("id", item.id)
+            intent.putExtra("id", item.id.toString())
             context.startActivity(intent)
         }
     }

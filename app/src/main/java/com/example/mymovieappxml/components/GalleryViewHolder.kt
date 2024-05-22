@@ -16,8 +16,4 @@ class GalleryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         Glide.with(image.context).load(imageMovieUrl(imageModel.filePath)).into(image)
     }
 
-    fun renderImageGallery(imageModel: MovieAndSeriesImagePoster){
-
-       /* Glide.with(imageGallery.context).load(imageMovieUrl(imageModel.filePath)).into(imageGallery)*/
-    }
 }
