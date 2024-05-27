@@ -18,7 +18,6 @@ import com.example.mymovieappxml.R
 import com.example.mymovieappxml.components.CastAdapter
 import com.example.mymovieappxml.components.GalleryAdapter
 import com.example.mymovieappxml.databinding.ActivityMain2Binding
-import com.example.mymovieappxml.movies.Movie
 import com.example.mymovieappxml.movies.MovieAndSeriesImagePoster
 import com.example.mymovieappxml.movies.MovieCast
 import com.example.mymovieappxml.viewmodel.DetailsViewModel

@@ -10,8 +10,10 @@ import com.bumptech.glide.Glide
 import com.example.mymovieappxml.R
 import com.example.mymovieappxml.view.MainActivity
 
-class SliderAdapter(var list: List<SliderModel>, private var context: Context) :
+class SliderAdapter(var list: List<SliderModel>) :
     RecyclerView.Adapter<SliderAdapter.ViewHolder>() {
+
+    private lateinit var context:Context
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val sliderImage: ImageView = itemView.findViewById(R.id.slider_image)
@@ -21,7 +23,7 @@ class SliderAdapter(var list: List<SliderModel>, private var context: Context) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.slider_layout, parent, false)
-
+        context = parent.context
         return ViewHolder(view)
     }
 

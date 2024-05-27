@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
         homeViewModel.listUpcoming.observe(this, Observer { listOfUpComingMovies ->
             isList = listOfUpComingMovies.toMutableList()
-            adapter = SliderAdapter(isList, this)
+            adapter = SliderAdapter(isList)
             isViewImage.adapter = adapter
 
         })
