@@ -1,9 +1,5 @@
 package com.example.mymovieappxml.view
 
-import android.app.Dialog
-import android.content.res.Resources
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
@@ -18,12 +14,10 @@ import com.example.mymovieappxml.R
 import com.example.mymovieappxml.components.CastAdapter
 import com.example.mymovieappxml.components.GalleryAdapter
 import com.example.mymovieappxml.databinding.ActivityMain2Binding
-import com.example.mymovieappxml.movies.Movie
+
 import com.example.mymovieappxml.movies.MovieAndSeriesImagePoster
 import com.example.mymovieappxml.movies.MovieCast
 import com.example.mymovieappxml.viewmodel.DetailsViewModel
-
-
 
 class MainActivity2 : AppCompatActivity() {
     private lateinit var binding: ActivityMain2Binding
