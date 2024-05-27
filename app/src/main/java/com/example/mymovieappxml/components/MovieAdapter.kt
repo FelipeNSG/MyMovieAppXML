@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mymovieappxml.R
 import com.example.mymovieappxml.movies.Movie
 import com.example.mymovieappxml.movies.imageMovieUrl
-import com.example.mymovieappxml.view.MainActivity2
+import com.example.mymovieappxml.view.MainFragment2
 
-class MovieAdapter(private val moviesList: List<Movie>) : RecyclerView.Adapter<MovieViewHolder>() {
+class MovieAdapter(private val moviesList: List<Movie>,  val callBack: (Movie) -> Unit ) : RecyclerView.Adapter<MovieViewHolder>() {
     private lateinit var context:Context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
@@ -23,13 +23,9 @@ class MovieAdapter(private val moviesList: List<Movie>) : RecyclerView.Adapter<M
         val item = moviesList[position]
         holder.render(item)
         holder.itemView.setOnClickListener {
-            val intent = Intent(context, MainActivity2::class.java)
-            intent.putExtra("title", item.title )
-            intent.putExtra("imageBackground", imageMovieUrl(item.url))
-            intent.putExtra("type", item.type)
-            intent.putExtra("id", item.id.toString())
-            context.startActivity(intent)
+            callBack.invoke(item)
         }
+
     }
 
     override fun getItemCount(): Int = moviesList.size

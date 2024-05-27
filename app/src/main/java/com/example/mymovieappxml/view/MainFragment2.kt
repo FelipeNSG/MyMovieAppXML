@@ -1,9 +1,7 @@
 package com.example.mymovieappxml.view
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -20,7 +18,7 @@ import com.example.mymovieappxml.movies.MovieAndSeriesImagePoster
 import com.example.mymovieappxml.movies.MovieCast
 import com.example.mymovieappxml.viewmodel.DetailsViewModel
 
-class MainActivity2 : Fragment() {
+class MainFragment2 : Fragment(R.layout.activity_main2) {
     private lateinit var binding: ActivityMain2Binding
     private val detailsViewModel: DetailsViewModel by viewModels()
     private var castList: MutableList<MovieCast> = mutableListOf()
@@ -28,20 +26,11 @@ class MainActivity2 : Fragment() {
     private lateinit var castAdapter: CastAdapter
     private lateinit var galleryAdapter: GalleryAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
-
-
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding = ActivityMain2Binding.inflate(layoutInflater)
+        binding = ActivityMain2Binding.bind(view)
 
         fun initRecyclerViewCastList() {
             val recyclerView = binding.recyclerCast
@@ -89,62 +78,64 @@ class MainActivity2 : Fragment() {
         }
 
 
-        detailsViewModel.movieAndSeriesDetails.observe(viewLifecycleOwner, Observer { movieOrSeriesDetail ->
-            when (movieOrSeriesDetail) {
-                DetailsViewModel.MovieDetailsState.Loading -> {
-                    screenLogin()
-                    CastAdapter(emptyList())
-                    GalleryAdapter(emptyList())
-                }
-
-                is DetailsViewModel.MovieDetailsState.Success -> {
-                    val backButton = binding.backArrowAppBar
-                    backButton.setOnClickListener {
-                        /*finish()*/
+        detailsViewModel.movieAndSeriesDetails.observe(
+            viewLifecycleOwner,
+            Observer { movieOrSeriesDetail ->
+                when (movieOrSeriesDetail) {
+                    DetailsViewModel.MovieDetailsState.Loading -> {
+                        screenLogin()
+                        CastAdapter(emptyList())
+                        GalleryAdapter(emptyList())
                     }
-                    binding.progressBar.isVisible = false
-                    binding.imageFromTheMovieOrSeriesForScreenBackground.isVisible = true
-                    binding.scrollableScreenDetails.isVisible = true
-                    val details = (movieOrSeriesDetail).details
+
+                    is DetailsViewModel.MovieDetailsState.Success -> {
+                        val backButton = binding.backArrowAppBar
+                        backButton.setOnClickListener {
+
+                        }
+                        binding.progressBar.isVisible = false
+                        binding.imageFromTheMovieOrSeriesForScreenBackground.isVisible = true
+                        binding.scrollableScreenDetails.isVisible = true
+                        val details = (movieOrSeriesDetail).details
 
 
-                    if (details._type == "movie") {
-                        binding.premiereDate.text = details._releaseDate
-                        binding.durationMovieOrSeries.text =
-                            details._runtime.toString().plus(" minutes")
-                        binding.categoriesDescription.text = details._genre[0].name
-                    } else {
-                        binding.premiereDate.text = details._firstAirDate.take(4)
-                        if (details._episodeRunTime.isNotEmpty()) {
+                        if (details._type == "movie") {
+                            binding.premiereDate.text = details._releaseDate
                             binding.durationMovieOrSeries.text =
-                                details._episodeRunTime[0].toString().plus(" minutes")
+                                details._runtime.toString().plus(" minutes")
+                            binding.categoriesDescription.text = details._genre[0].name
                         } else {
-                            binding.durationMovieOrSeries.text = getString(R.string.unknownTitle)
+                            binding.premiereDate.text = details._firstAirDate.take(4)
+                            if (details._episodeRunTime.isNotEmpty()) {
+                                binding.durationMovieOrSeries.text =
+                                    details._episodeRunTime[0].toString().plus(" minutes")
+                            } else {
+                                binding.durationMovieOrSeries.text =
+                                    getString(R.string.unknownTitle)
+                            }
+
+                            binding.categoriesDescription.text = details._genres[0].name
                         }
 
-                        binding.categoriesDescription.text = details._genres[0].name
+                        binding.tagLineDescription.text = details._tagline
+
+
+                        binding.punctuation.text = details._voteAverage.toString().take(3)
+
+                        binding.storyLineDescription.text = details._overview
+
+                        castList = movieOrSeriesDetail.credits.toMutableList()
+                        castAdapter = CastAdapter(castList)
+                        initRecyclerViewCastList()
+
+                        galleryImages = movieOrSeriesDetail.imagePoster.toMutableList()
+                        galleryAdapter = GalleryAdapter(galleryImages)
+                        initRecyclerViewGallery()
                     }
-
-                    binding.tagLineDescription.text = details._tagline
-
-
-                    binding.punctuation.text = details._voteAverage.toString().take(3)
-
-                    binding.storyLineDescription.text = details._overview
-
-                    castList = movieOrSeriesDetail.credits.toMutableList()
-                    castAdapter = CastAdapter(castList)
-                    initRecyclerViewCastList()
-
-                    galleryImages = movieOrSeriesDetail.imagePoster.toMutableList()
-                    galleryAdapter = GalleryAdapter(galleryImages)
-                    initRecyclerViewGallery()
                 }
-            }
-        })
+            })
 
     }
-
 
 
 }

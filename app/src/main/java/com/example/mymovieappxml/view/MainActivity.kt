@@ -1,19 +1,20 @@
 package com.example.mymovieappxml.view
 
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.activity.viewModels
+import androidx.core.view.isInvisible
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
+import com.example.mymovieappxml.R
 import com.example.mymovieappxml.components.MovieAdapter
 import com.example.mymovieappxml.components.SeriesAdapter
 import com.example.mymovieappxml.components.SliderAdapter
@@ -25,154 +26,16 @@ import com.example.mymovieappxml.viewmodel.HomeViewModel
 import kotlin.math.abs
 import kotlinx.coroutines.Runnable
 
-    class MainActivity : Fragment() {
-
-    private lateinit var binding: ActivityMainBinding
-    private val homeViewModel: HomeViewModel by viewModels()
-    lateinit var isViewImage: ViewPager2
-    lateinit var isList: MutableList<SliderModel>
-    private var popularMovies: MutableList<Movie> = mutableListOf()
-    private var playNowMovies: MutableList<Movie> = mutableListOf()
-    private var topRateMovies: MutableList<Movie> = mutableListOf()
-    private var popularSeries: MutableList<Series> = mutableListOf()
-    lateinit var movieAdapterUpcomingMovies: SliderAdapter
-    val sliderHandler = Handler(Looper.myLooper()!!)
-    private lateinit var movieAdapterPopularMovies: MovieAdapter
-    private lateinit var movieAdapterPlayNowMovies: MovieAdapter
-    private lateinit var movieAdapterTopRateMovies: MovieAdapter
-    private lateinit var movieAdapterPopularSeries: SeriesAdapter
-
-        override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View? {
-            return super.onCreateView(inflater, container, savedInstanceState)
-        }
-
-
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-
-
-        }
-
-
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-
-        isViewImage = binding.isViewImage
-        isList = mutableListOf()
-        popularMovies = mutableListOf()
-        isViewImage.clipChildren = false
-        isViewImage.clipToPadding = false
-        isViewImage.offscreenPageLimit = 5
-        isViewImage.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-
-        val compositePageTransformer = CompositePageTransformer()
-        compositePageTransformer.addTransformer(MarginPageTransformer(40))
-        compositePageTransformer.addTransformer { page, position ->
-            val r = 1 - abs(position)
-            page.scaleY = 0.85f + r * 0.15f
+        setContentView(R.layout.activity_container)
+        supportFragmentManager.commit {
+            add<MainFragment>(R.id.container_activity)
+            setReorderingAllowed(true)
         }
 
-        isViewImage.setPageTransformer(compositePageTransformer)
-        isViewImage.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                sliderHandler.removeCallbacks(sliderRunnable)
-                sliderHandler.postDelayed(sliderRunnable, 4000)
-
-                if (position == isList.size - 2) {
-                    isViewImage.post(runnable)
-                }
-                movieAdapterUpcomingMovies.notifyDataSetChanged()
-            }
-        })
-
-        homeViewModel.listUpcoming.observe(this, Observer { listOfUpComingMovies ->
-            isList = listOfUpComingMovies.toMutableList()
-            movieAdapterUpcomingMovies = SliderAdapter(isList)
-            isViewImage.adapter = movieAdapterUpcomingMovies
-
-        })
-
-
-        homeViewModel.popularMovies.observe(this, Observer { listOfPopularMovies ->
-            popularMovies = listOfPopularMovies.toMutableList()
-            movieAdapterPopularMovies = MovieAdapter(popularMovies.toList())
-            initRecyclerViewUpcomingMoviesList()
-        })
-
-        homeViewModel.playNowMovies.observe(this, Observer { playNowMovieList ->
-            playNowMovies = playNowMovieList.toMutableList()
-            movieAdapterPlayNowMovies = MovieAdapter(playNowMovies)
-            initRecyclerViewPlayNowMovieList()
-
-        })
-
-        homeViewModel.topRateMovies.observe(this, Observer { topRateMoviesList ->
-            topRateMovies = topRateMoviesList.toMutableList()
-            movieAdapterTopRateMovies = MovieAdapter(topRateMovies)
-            initRecyclerViewTopRateMovies()
-
-        })
-        homeViewModel.popularSeries.observe(this, Observer { popularSeriesList ->
-            popularSeries = popularSeriesList.toMutableList()
-            movieAdapterPopularSeries = SeriesAdapter(popularSeries)
-            initRecyclerViewPopularSeries()
-        })
-
     }
-
-    val sliderRunnable = Runnable { isViewImage.currentItem = isViewImage.currentItem + 1 }
-    val runnable = Runnable {
-        isList.addAll(isList)
-        movieAdapterUpcomingMovies.notifyDataSetChanged()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        sliderHandler.postDelayed(sliderRunnable, 500)
-    }
-
-
-
-    //List of movies
-    private fun initRecyclerViewUpcomingMoviesList() {
-        val recyclerView = binding.recyclerViewPopularMovies
-
-        recyclerView.layoutManager = LinearLayoutManager(
-            context, RecyclerView.HORIZONTAL, false
-        )
-        recyclerView.adapter = movieAdapterPopularMovies
-    }
-
-    private fun initRecyclerViewPlayNowMovieList() {
-        val recyclerView = binding.recyclerViewPlayNowMovies
-        recyclerView.layoutManager = LinearLayoutManager(
-            context, RecyclerView.HORIZONTAL, false
-        )
-        recyclerView.adapter = movieAdapterPlayNowMovies
-    }
-
-    private fun initRecyclerViewTopRateMovies() {
-        val recyclerView = binding.recyclerViewTopRateMovies
-        recyclerView.layoutManager = LinearLayoutManager(
-            context, RecyclerView.HORIZONTAL, false
-        )
-        recyclerView.adapter = movieAdapterTopRateMovies
-    }
-
-    private fun initRecyclerViewPopularSeries() {
-        val recyclerView = binding.recyclerViewPopularSeries
-        recyclerView.layoutManager = LinearLayoutManager(
-            context, RecyclerView.HORIZONTAL, false
-        )
-        recyclerView.adapter = movieAdapterPopularSeries
-    }
-
 
 }
