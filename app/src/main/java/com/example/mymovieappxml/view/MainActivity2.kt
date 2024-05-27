@@ -1,11 +1,12 @@
 package com.example.mymovieappxml.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.activity.viewModels
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,118 +20,129 @@ import com.example.mymovieappxml.movies.MovieAndSeriesImagePoster
 import com.example.mymovieappxml.movies.MovieCast
 import com.example.mymovieappxml.viewmodel.DetailsViewModel
 
-class MainActivity2 : AppCompatActivity() {
+class MainActivity2 : Fragment() {
     private lateinit var binding: ActivityMain2Binding
     private val detailsViewModel: DetailsViewModel by viewModels()
     private var castList: MutableList<MovieCast> = mutableListOf()
     private var galleryImages: MutableList<MovieAndSeriesImagePoster> = mutableListOf()
-    private lateinit var  castAdapter:CastAdapter
-    private lateinit var  galleryAdapter:GalleryAdapter
+    private lateinit var castAdapter: CastAdapter
+    private lateinit var galleryAdapter: GalleryAdapter
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return super.onCreateView(inflater, container, savedInstanceState)
 
 
-    private fun initRecyclerViewCastList() {
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerCast)
-        recyclerView.layoutManager = LinearLayoutManager(
-            this, RecyclerView.HORIZONTAL, false
-        )
-        recyclerView.adapter = castAdapter
     }
 
-    private fun initRecyclerViewGallery() {
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerGallery)
-        recyclerView.layoutManager = LinearLayoutManager(
-            this, RecyclerView.HORIZONTAL, false
-        )
-        recyclerView.adapter = galleryAdapter
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        this.resources.getString(R.string.movie)
-        super.onCreate(savedInstanceState)
         binding = ActivityMain2Binding.inflate(layoutInflater)
 
-        fun screenLogin(){
+        fun initRecyclerViewCastList() {
+            val recyclerView = binding.recyclerCast
+            recyclerView.layoutManager = LinearLayoutManager(
+                context, RecyclerView.HORIZONTAL, false
+            )
+            recyclerView.adapter = castAdapter
+        }
+
+        fun initRecyclerViewGallery() {
+            val recyclerView = binding.recyclerGallery
+            recyclerView.layoutManager = LinearLayoutManager(
+                context, RecyclerView.HORIZONTAL, false
+            )
+            recyclerView.adapter = galleryAdapter
+        }
+
+
+        fun screenLogin() {
             binding.progressBar.isVisible = true
             binding.imageFromTheMovieOrSeriesForScreenBackground.isVisible = false
             binding.scrollableScreenDetails.isVisible = false
         }
         screenLogin()
-        setContentView(binding.root)
-        val bundle = intent.extras
-        val type = bundle?.getString("type")?:"movie"
-        val id = bundle?.getString("id")?: "Unknown"
+        val bundle = arguments
+        val type = bundle?.getString("type") ?: "movie"
+        val id = bundle?.getString("id") ?: "Unknown"
         val titleData = bundle?.getString("title")
         val imageBackgroundImageUrl = bundle?.getString("imageBackground")
-        detailsViewModel.getMovieAndSeriesDetails(id.toInt(),type)
+        detailsViewModel.getMovieAndSeriesDetails(id.toInt(), type)
 
-        findViewById<TextView>(binding.movieTitle.id).apply { this.text = detailsViewModel.titleTransform(titleData?:"Unknown") }
-        findViewById<ImageView>(binding.imageFromTheMovieOrSeriesForScreenBackground.id).apply {
-            Glide.with(this.context)
+        binding.movieTitle.text = detailsViewModel.titleTransform(titleData ?: "Unknown")
+        activity?.let {
+            Glide.with(it)
                 .load(imageBackgroundImageUrl)
                 .centerCrop()
-                .into(this)
+                .into(binding.imageFromTheMovieOrSeriesForScreenBackground)
         }
-        findViewById<ImageView>(binding.mainImage.id).apply {
-            Glide.with(this.context)
+
+        activity?.let {
+            Glide.with(it)
                 .load(imageBackgroundImageUrl)
                 .centerCrop()
-                .into(this)
+                .into(binding.mainImage)
         }
 
-       detailsViewModel.movieAndSeriesDetails.observe(this, Observer { movieOrSeriesDetail ->
-           when(movieOrSeriesDetail){
-               DetailsViewModel.MovieDetailsState.Loading -> {
-                 screenLogin()
-                   CastAdapter(emptyList())
-                   GalleryAdapter(emptyList())
-               }
 
-               is DetailsViewModel.MovieDetailsState.Success -> {
-                  val backButton = binding.backArrowAppBar
-                   backButton.setOnClickListener {
-                       finish()
-                   }
-                   binding.progressBar.isVisible = false
-                   binding.imageFromTheMovieOrSeriesForScreenBackground.isVisible = true
-                   binding.scrollableScreenDetails.isVisible = true
-                   val details = (movieOrSeriesDetail).details
+        detailsViewModel.movieAndSeriesDetails.observe(viewLifecycleOwner, Observer { movieOrSeriesDetail ->
+            when (movieOrSeriesDetail) {
+                DetailsViewModel.MovieDetailsState.Loading -> {
+                    screenLogin()
+                    CastAdapter(emptyList())
+                    GalleryAdapter(emptyList())
+                }
+
+                is DetailsViewModel.MovieDetailsState.Success -> {
+                    val backButton = binding.backArrowAppBar
+                    backButton.setOnClickListener {
+                        /*finish()*/
+                    }
+                    binding.progressBar.isVisible = false
+                    binding.imageFromTheMovieOrSeriesForScreenBackground.isVisible = true
+                    binding.scrollableScreenDetails.isVisible = true
+                    val details = (movieOrSeriesDetail).details
 
 
-                   if (details._type == "movie"){
-                       findViewById<TextView>(binding.premiereDate.id).apply { this.text = details._releaseDate }
-                       findViewById<TextView>(binding.durationMovieOrSeries.id).apply { this.text = details._runtime.toString().plus(" minutes") }
-                       findViewById<TextView>(binding.categoriesDescription.id).apply { this.text = details._genre[0].name }
-                   }
-                   else{
-                       findViewById<TextView>(binding.premiereDate.id).apply{ this.text = details._firstAirDate.take(4) }
-                       if (details._episodeRunTime.isNotEmpty() ){findViewById<TextView>(binding.durationMovieOrSeries.id)
-                           .apply { this.text = details._episodeRunTime[0].toString().plus(" minutes") }}
-                       else{
-                           findViewById<TextView>(binding.durationMovieOrSeries.id)
-                               .apply { this.text = getString(R.string.unknownTitle) }
-                       }
-                       findViewById<TextView>(binding.categoriesDescription.id).apply {
-                           this.text = details._genres[0].name
-                       }
-                   }
-                   findViewById<TextView>(binding.tagLineDescription.id).apply {
-                       this.text = details._tagline
-                   }
-                   findViewById<TextView>(binding.punctuation.id).apply {
-                       this.text = details._voteAverage.toString().take(3)
-                   }
-                   findViewById<TextView>(binding.storyLineDescription.id).apply { this.text = details._overview }
+                    if (details._type == "movie") {
+                        binding.premiereDate.text = details._releaseDate
+                        binding.durationMovieOrSeries.text =
+                            details._runtime.toString().plus(" minutes")
+                        binding.categoriesDescription.text = details._genre[0].name
+                    } else {
+                        binding.premiereDate.text = details._firstAirDate.take(4)
+                        if (details._episodeRunTime.isNotEmpty()) {
+                            binding.durationMovieOrSeries.text =
+                                details._episodeRunTime[0].toString().plus(" minutes")
+                        } else {
+                            binding.durationMovieOrSeries.text = getString(R.string.unknownTitle)
+                        }
 
-                   castList = movieOrSeriesDetail.credits.toMutableList()
-                   castAdapter =  CastAdapter(castList)
-                   initRecyclerViewCastList()
+                        binding.categoriesDescription.text = details._genres[0].name
+                    }
 
-                   galleryImages = movieOrSeriesDetail.imagePoster.toMutableList()
-                   galleryAdapter = GalleryAdapter(galleryImages)
-                   initRecyclerViewGallery()
-               }
-           }
+                    binding.tagLineDescription.text = details._tagline
+
+
+                    binding.punctuation.text = details._voteAverage.toString().take(3)
+
+                    binding.storyLineDescription.text = details._overview
+
+                    castList = movieOrSeriesDetail.credits.toMutableList()
+                    castAdapter = CastAdapter(castList)
+                    initRecyclerViewCastList()
+
+                    galleryImages = movieOrSeriesDetail.imagePoster.toMutableList()
+                    galleryAdapter = GalleryAdapter(galleryImages)
+                    initRecyclerViewGallery()
+                }
+            }
         })
+
     }
 
 

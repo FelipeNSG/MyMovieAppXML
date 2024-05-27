@@ -43,6 +43,12 @@ android {
 dependencies {
     val lifecycle_version = "2.7.0"
     val activity_version = "1.9.0"
+    val nav_version = "2.7.7"
+
+    //Navigation  Fragments
+    // Kotlin
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
 
     implementation("androidx.activity:activity-ktx:$activity_version")
     // ViewModel
