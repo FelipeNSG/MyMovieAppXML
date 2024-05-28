@@ -46,7 +46,6 @@ class MainFragment : Fragment(R.layout.activity_main) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.bind(view)
         isViewImage = binding.isViewImage
         isList = mutableListOf()
