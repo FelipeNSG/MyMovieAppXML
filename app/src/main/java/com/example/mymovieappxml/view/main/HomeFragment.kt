@@ -1,4 +1,4 @@
-package com.example.mymovieappxml.view
+package com.example.mymovieappxml.view.main
 
 import android.os.Bundle
 import android.os.Handler
@@ -6,6 +6,9 @@ import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
+import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import androidx.fragment.app.viewModels
@@ -20,14 +23,18 @@ import com.example.mymovieappxml.components.MovieAdapter
 import com.example.mymovieappxml.components.SeriesAdapter
 import com.example.mymovieappxml.components.SliderAdapter
 import com.example.mymovieappxml.components.SliderModel
+import com.example.mymovieappxml.databinding.ActivityContainerBinding
 import com.example.mymovieappxml.databinding.ActivityMainBinding
 import com.example.mymovieappxml.movies.Movie
 import com.example.mymovieappxml.movies.Series
 import com.example.mymovieappxml.movies.imageMovieUrl
+import com.example.mymovieappxml.view.MainActivity
+import com.example.mymovieappxml.view.details.DetailsFragment2
 import com.example.mymovieappxml.viewmodel.HomeViewModel
+import kotlinx.coroutines.flow.callbackFlow
 import kotlin.math.abs
 
-class MainFragment : Fragment(R.layout.activity_main) {
+class HomeFragment() : Fragment(R.layout.activity_main) {
     private lateinit var binding: ActivityMainBinding
     private val homeViewModel: HomeViewModel by viewModels()
     lateinit var isViewImage: ViewPager2
@@ -43,6 +50,7 @@ class MainFragment : Fragment(R.layout.activity_main) {
     private lateinit var movieAdapterTopRateMovies: MovieAdapter
     private lateinit var movieAdapterPopularSeries: SeriesAdapter
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         super.onCreate(savedInstanceState)
@@ -54,6 +62,8 @@ class MainFragment : Fragment(R.layout.activity_main) {
         isViewImage.clipToPadding = false
         isViewImage.offscreenPageLimit = 5
         isViewImage.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+        val activity = requireActivity() as MainActivity
+
 
         //List of movies
         fun initRecyclerViewUpcomingMoviesList() {
@@ -119,37 +129,34 @@ class MainFragment : Fragment(R.layout.activity_main) {
 
         homeViewModel.popularMovies.observe(viewLifecycleOwner, Observer { listOfPopularMovies ->
             popularMovies = listOfPopularMovies.toMutableList()
-            movieAdapterPopularMovies = MovieAdapter(popularMovies.toList()){
-                parentFragmentManager.commit {
-                    replace<MainFragment2>(R.id.main_container, args = bundleOf(
+            movieAdapterPopularMovies = MovieAdapter(popularMovies.toList()) {
+
+                activity.replaceFragment(
+                    DetailsFragment2::class.java,
+                    bundleOf(
                         "title" to it.title,
                         "imageBackground" to imageMovieUrl(it.url),
                         "type" to it.type,
                         "id" to it.id.toString()
-                    ))
-                    setReorderingAllowed(true)
-
-                    addToBackStack("main")
-                }
+                    )
+                )
             }
             initRecyclerViewUpcomingMoviesList()
         })
 
         homeViewModel.playNowMovies.observe(viewLifecycleOwner, Observer { playNowMovieList ->
             playNowMovies = playNowMovieList.toMutableList()
-            movieAdapterPlayNowMovies = MovieAdapter(playNowMovies){
+            movieAdapterPlayNowMovies = MovieAdapter(playNowMovies) {
 
-                parentFragmentManager.commit {
-                    replace<MainFragment2>(R.id.main_container, args = bundleOf(
+                activity.replaceFragment(
+                    DetailsFragment2::class.java,
+                    bundleOf(
                         "title" to it.title,
                         "imageBackground" to imageMovieUrl(it.url),
                         "type" to it.type,
                         "id" to it.id.toString()
-                    ))
-                    setReorderingAllowed(true)
-
-                    addToBackStack("main")
-                }
+                    )
+                )
 
             }
             initRecyclerViewPlayNowMovieList()
@@ -158,38 +165,37 @@ class MainFragment : Fragment(R.layout.activity_main) {
 
         homeViewModel.topRateMovies.observe(viewLifecycleOwner, Observer { topRateMoviesList ->
             topRateMovies = topRateMoviesList.toMutableList()
-            movieAdapterTopRateMovies = MovieAdapter(topRateMovies){
-                parentFragmentManager.commit {
-                    replace<MainFragment2>(R.id.main_container, args = bundleOf(
+            movieAdapterTopRateMovies = MovieAdapter(topRateMovies) {
+                activity.replaceFragment(
+                    DetailsFragment2::class.java,
+                    bundleOf(
                         "title" to it.title,
                         "imageBackground" to imageMovieUrl(it.url),
                         "type" to it.type,
                         "id" to it.id.toString()
-                    ))
-                    setReorderingAllowed(true)
-
-                    addToBackStack("main")
-                }
+                    )
+                )
             }
             initRecyclerViewTopRateMovies()
 
         })
         homeViewModel.popularSeries.observe(viewLifecycleOwner, Observer { popularSeriesList ->
             popularSeries = popularSeriesList.toMutableList()
-            movieAdapterPopularSeries = SeriesAdapter(popularSeries){
-                parentFragmentManager.commit {
-                    replace<MainFragment2>(R.id.main_container, args = bundleOf(
+            movieAdapterPopularSeries = SeriesAdapter(popularSeries) {
+                activity.replaceFragment(
+                    DetailsFragment2::class.java,
+                    bundleOf(
                         "title" to it.title,
                         "imageBackground" to imageMovieUrl(it.url),
                         "type" to it.type,
                         "id" to it.id.toString()
-                    ))
-                    setReorderingAllowed(true)
-                    addToBackStack("main")
-                }
+                    )
+                )
             }
             initRecyclerViewPopularSeries()
         })
+
+
     }
 
     val sliderRunnable =

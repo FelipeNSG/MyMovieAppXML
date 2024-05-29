@@ -1,15 +1,11 @@
 package com.example.mymovieappxml.components
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymovieappxml.R
-import com.example.mymovieappxml.movies.Movie
 import com.example.mymovieappxml.movies.Series
-import com.example.mymovieappxml.movies.imageMovieUrl
-import com.example.mymovieappxml.view.MainFragment2
 
 class SeriesAdapter(private val seriesList: List<Series>, val callBack: (Series) -> Unit) : RecyclerView.Adapter<SeriesViewHolder>() {
 

@@ -24,5 +24,5 @@
     <string name="imageBackground">imageBackground</string>
     <string name="movie">movie</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">Search</string>
 </resources>

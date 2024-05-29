@@ -7,7 +7,7 @@
     android:background="@color/containerColor"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".view.MainFragment2">
+    tools:context=".view.details.DetailsFragment2">
 
     <ProgressBar
         android:id="@+id/progressBar"

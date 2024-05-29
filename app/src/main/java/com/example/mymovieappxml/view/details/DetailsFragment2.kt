@@ -1,10 +1,9 @@
-package com.example.mymovieappxml.view
+package com.example.mymovieappxml.view.details
 
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.replace
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,23 +13,23 @@ import com.example.mymovieappxml.R
 import com.example.mymovieappxml.components.CastAdapter
 import com.example.mymovieappxml.components.GalleryAdapter
 import com.example.mymovieappxml.databinding.ActivityMain2Binding
-
 import com.example.mymovieappxml.movies.MovieAndSeriesImagePoster
 import com.example.mymovieappxml.movies.MovieCast
 import com.example.mymovieappxml.viewmodel.DetailsViewModel
 
-class MainFragment2 : Fragment(R.layout.activity_main2) {
-    private lateinit var binding: ActivityMain2Binding
+class DetailsFragment2 : Fragment(R.layout.activity_main2) {
+
     private val detailsViewModel: DetailsViewModel by viewModels()
     private var castList: MutableList<MovieCast> = mutableListOf()
     private var galleryImages: MutableList<MovieAndSeriesImagePoster> = mutableListOf()
     private lateinit var castAdapter: CastAdapter
     private lateinit var galleryAdapter: GalleryAdapter
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = ActivityMain2Binding.bind(view)
+       val binding = ActivityMain2Binding.bind(view)
+
+
 
         fun initRecyclerViewCastList() {
             val recyclerView = binding.recyclerCast
@@ -48,7 +47,6 @@ class MainFragment2 : Fragment(R.layout.activity_main2) {
             recyclerView.adapter = galleryAdapter
         }
 
-
         fun screenLogin() {
             binding.progressBar.isVisible = true
             binding.imageFromTheMovieOrSeriesForScreenBackground.isVisible = false
@@ -60,6 +58,7 @@ class MainFragment2 : Fragment(R.layout.activity_main2) {
         val id = bundle?.getString("id") ?: "Unknown"
         val titleData = bundle?.getString("title")
         val imageBackgroundImageUrl = bundle?.getString("imageBackground")
+
         detailsViewModel.getMovieAndSeriesDetails(id.toInt(), type)
 
         binding.movieTitle.text = detailsViewModel.titleTransform(titleData ?: "Unknown")
@@ -77,7 +76,6 @@ class MainFragment2 : Fragment(R.layout.activity_main2) {
                 .into(binding.mainImage)
         }
 
-
         detailsViewModel.movieAndSeriesDetails.observe(
             viewLifecycleOwner,
             Observer { movieOrSeriesDetail ->
@@ -91,9 +89,7 @@ class MainFragment2 : Fragment(R.layout.activity_main2) {
                     is DetailsViewModel.MovieDetailsState.Success -> {
                         val backButton = binding.backArrowAppBar
                         backButton.setOnClickListener {
-
-                      parentFragmentManager.popBackStack()
-
+                            parentFragmentManager.popBackStack()
                         }
                         binding.progressBar.isVisible = false
                         binding.imageFromTheMovieOrSeriesForScreenBackground.isVisible = true
@@ -120,12 +116,8 @@ class MainFragment2 : Fragment(R.layout.activity_main2) {
                         }
 
                         binding.tagLineDescription.text = details._tagline
-
-
                         binding.punctuation.text = details._voteAverage.toString().take(3)
-
                         binding.storyLineDescription.text = details._overview
-
                         castList = movieOrSeriesDetail.credits.toMutableList()
                         castAdapter = CastAdapter(castList)
                         initRecyclerViewCastList()
