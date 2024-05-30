@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.add
 import com.example.mymovieappxml.R
 import com.example.mymovieappxml.databinding.ActivityContainerBinding
 import com.example.mymovieappxml.view.main.DownloadFragment
@@ -23,33 +24,36 @@ class MainActivity : AppCompatActivity() {
     private val favoritesFragment = FavoritesFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivityContainerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val bottomNavigationView = binding.bottomNavigation
-        replaceFragment(HomeFragment::class.java)
+
+        fragmentReplace(homeFragment)
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.home -> {
 
-                    replaceFragment(homeFragment::class.java)
+                    addFragment(homeFragment,"home")
+
 
                     return@setOnItemSelectedListener true
                 }
 
                 R.id.search -> {
-                    replaceFragment(searchFragment::class.java)
+                    addFragment(searchFragment,"search")
                     return@setOnItemSelectedListener true
                 }
 
                 R.id.download -> {
-                    replaceFragment(downloadFragment::class.java)
+                    addFragment(downloadFragment,"download")
                     return@setOnItemSelectedListener true
                 }
 
                 R.id.favorites -> {
-                    replaceFragment(favoritesFragment::class.java)
+                    addFragment(favoritesFragment,"favorites")
                     return@setOnItemSelectedListener true
                 }
 
@@ -77,9 +81,35 @@ class MainActivity : AppCompatActivity() {
    fun replaceFragment(fragment: Class<out Fragment>, args: Bundle? = null) {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.container_FrameLayout, fragment, args)
+        fragmentTransaction.add(binding.containerFrameLayout.id, fragment, args)
+       fragmentTransaction.setReorderingAllowed(true)
         fragmentTransaction.addToBackStack("principal")
         fragmentTransaction.commit()
+
+   }
+
+    fun fragmentReplace(fragment:Fragment){
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(binding.containerFrameLayout.id, fragment)
+        transaction.addToBackStack("principal")
+        transaction.commit()
+    }
+
+    fun addFragment(fragment: Fragment, tag:String) {
+        val transaction = supportFragmentManager.beginTransaction()
+        val currentFragment = supportFragmentManager.fragments.last() //take care. If before you dont have any fragment stack, it can cause empty exception! // The Correct way is: supportFragmentManager.fragments.last()?.getChildFragmentManager()?.getFragments()?.get(0)
+
+        if (fragment.isAdded) {
+            transaction
+                .hide(currentFragment)
+                .show(fragment)
+        } else {
+            transaction
+                .hide(currentFragment)
+                .add(binding.containerFrameLayout.id, fragment, tag)
+        }
+
+        transaction.commit()
     }
 
 }
