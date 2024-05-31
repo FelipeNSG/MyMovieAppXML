@@ -1,11 +1,11 @@
 package com.example.mymovieappxml.view
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.add
+import androidx.fragment.app.FragmentManager
 import com.example.mymovieappxml.R
 import com.example.mymovieappxml.databinding.ActivityContainerBinding
 import com.example.mymovieappxml.view.main.DownloadFragment
@@ -18,45 +18,50 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityContainerBinding
 
     private val homeFragment = HomeFragment()
-
     private val searchFragment = SearchFragment()
     private val downloadFragment = DownloadFragment()
     private val favoritesFragment = FavoritesFragment()
-
+    private var lastFragment: Fragment = homeFragment
+    private var setOnclickListenerFragment: Boolean = true
+    private var isAddFragmentAlready = false
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         binding = ActivityContainerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val bottomNavigationView = binding.bottomNavigation
-
-        fragmentReplace(homeFragment)
+        fragmentReplace(homeFragment, "home")
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.home -> {
-
-                    addFragment(homeFragment,"home")
-
-
+                    if (setOnclickListenerFragment) {
+                        addFragment(homeFragment, "home")
+                        lastFragment = homeFragment
+                    }
                     return@setOnItemSelectedListener true
                 }
-
                 R.id.search -> {
-                    addFragment(searchFragment,"search")
+                    if (setOnclickListenerFragment) {
+                        addFragment(searchFragment, "search")
+                        lastFragment = searchFragment
+                    }
                     return@setOnItemSelectedListener true
                 }
-
                 R.id.download -> {
-                    addFragment(downloadFragment,"download")
+                    if (setOnclickListenerFragment) {
+                        addFragment(downloadFragment, "download")
+                        lastFragment = downloadFragment
+                    }
                     return@setOnItemSelectedListener true
                 }
-
                 R.id.favorites -> {
-                    addFragment(favoritesFragment,"favorites")
+                    if (setOnclickListenerFragment) {
+                        addFragment(favoritesFragment, "favorites")
+                        lastFragment = favoritesFragment
+                    }
                     return@setOnItemSelectedListener true
                 }
-
             }
             return@setOnItemSelectedListener false
         }
@@ -66,50 +71,109 @@ class MainActivity : AppCompatActivity() {
             val containerFragments =
                 supportFragmentManager.findFragmentById(binding.containerFrameLayout.id)
 
-            if (containerFragments is HomeFragment|| containerFragments is SearchFragment ||
+            if (containerFragments is HomeFragment || containerFragments is SearchFragment ||
                 containerFragments is DownloadFragment || containerFragments is FavoritesFragment
             ) {
                 bottomNavigationView.isGone = false
-            }
-            else {
+            } else {
                 bottomNavigationView.isGone = true
             }
         }
 
     }
 
-   fun replaceFragment(fragment: Class<out Fragment>, args: Bundle? = null) {
+    fun replaceFragment(fragment: Class<out Fragment>, args: Bundle? = null) {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.add(binding.containerFrameLayout.id, fragment, args)
-       fragmentTransaction.setReorderingAllowed(true)
-        fragmentTransaction.addToBackStack("principal")
+        fragmentTransaction.setReorderingAllowed(true)
+        fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
 
-   }
+    }
 
-    fun fragmentReplace(fragment:Fragment){
+    fun fragmentReplace(fragment: Fragment, tag: String) {
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(binding.containerFrameLayout.id, fragment)
-        transaction.addToBackStack("principal")
+        transaction.replace(binding.containerFrameLayout.id, fragment, tag)
         transaction.commit()
     }
 
-    fun addFragment(fragment: Fragment, tag:String) {
-        val transaction = supportFragmentManager.beginTransaction()
-        val currentFragment = supportFragmentManager.fragments.last() //take care. If before you dont have any fragment stack, it can cause empty exception! // The Correct way is: supportFragmentManager.fragments.last()?.getChildFragmentManager()?.getFragments()?.get(0)
-
-        if (fragment.isAdded) {
-            transaction
-                .hide(currentFragment)
-                .show(fragment)
-        } else {
-            transaction
-                .hide(currentFragment)
-                .add(binding.containerFrameLayout.id, fragment, tag)
+    fun addFragment(fragment: Fragment, tag: String) {
+        if (fragment.isAdded && fragment.isVisible){
+            return
         }
+        val transaction = supportFragmentManager.beginTransaction()
+        if (fragment.isAdded ) {
+            transaction
+                .hide(lastFragment)
+                .show(fragment)
+            isAddFragmentAlready = true
 
+        } else {
+            transaction.hide(lastFragment)
+                .add(binding.containerFrameLayout.id, fragment, tag)
+                .show(fragment)
+                .addToBackStack(null)
+
+           /* println("El fragmento nuevo ha sido agregado")
+            println("este es el fragmento ${fragment.tag}")
+            println("este es el ultimo fragmento ${lastFragment.tag}")*/
+        }
         transaction.commit()
     }
 
+    fun showFragment(fragment: Fragment) {
+        if (fragment.isAdded ) {
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction
+                .hide(lastFragment)
+                .show(fragment)
+            transaction.commit()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val callback = object : OnBackPressedCallback(
+            true // default to enabled
+        ) {
+            override fun handleOnBackPressed() {
+                if (supportFragmentManager.fragments.size == 1) {
+                    finish()
+                }
+
+                if (!isAddFragmentAlready) {
+                    supportFragmentManager.popBackStackImmediate()
+                }
+                when (supportFragmentManager.fragments.last()) {
+                    homeFragment -> {
+                        binding.bottomNavigation.selectedItemId = R.id.home
+
+                        showFragment(homeFragment)
+                    }
+
+                    searchFragment -> {
+                        binding.bottomNavigation.selectedItemId = R.id.search
+                        showFragment(searchFragment)
+                    }
+
+                    downloadFragment -> {
+                        binding.bottomNavigation.selectedItemId = R.id.download
+                        showFragment(downloadFragment)
+                    }
+
+                    favoritesFragment -> {
+                        binding.bottomNavigation.selectedItemId = R.id.favorites
+                        showFragment(favoritesFragment)
+                    }
+                }
+                setOnclickListenerFragment = true
+                isAddFragmentAlready = false
+            }
+        }
+        this.onBackPressedDispatcher.addCallback(
+            this, // LifecycleOwner
+            callback
+        )
+    }
 }

@@ -130,7 +130,7 @@ class HomeFragment() : Fragment(R.layout.activity_main) {
         homeViewModel.popularMovies.observe(viewLifecycleOwner, Observer { listOfPopularMovies ->
             popularMovies = listOfPopularMovies.toMutableList()
             movieAdapterPopularMovies = MovieAdapter(popularMovies.toList()) {
-
+            activity.supportFragmentManager.fragments.clear()
                 activity.replaceFragment(
                     DetailsFragment2::class.java,
                     bundleOf(
@@ -147,7 +147,7 @@ class HomeFragment() : Fragment(R.layout.activity_main) {
         homeViewModel.playNowMovies.observe(viewLifecycleOwner, Observer { playNowMovieList ->
             playNowMovies = playNowMovieList.toMutableList()
             movieAdapterPlayNowMovies = MovieAdapter(playNowMovies) {
-
+                activity.supportFragmentManager.fragments.clear()
                 activity.replaceFragment(
                     DetailsFragment2::class.java,
                     bundleOf(
@@ -166,6 +166,7 @@ class HomeFragment() : Fragment(R.layout.activity_main) {
         homeViewModel.topRateMovies.observe(viewLifecycleOwner, Observer { topRateMoviesList ->
             topRateMovies = topRateMoviesList.toMutableList()
             movieAdapterTopRateMovies = MovieAdapter(topRateMovies) {
+                activity.supportFragmentManager.fragments.clear()
                 activity.replaceFragment(
                     DetailsFragment2::class.java,
                     bundleOf(
@@ -182,6 +183,7 @@ class HomeFragment() : Fragment(R.layout.activity_main) {
         homeViewModel.popularSeries.observe(viewLifecycleOwner, Observer { popularSeriesList ->
             popularSeries = popularSeriesList.toMutableList()
             movieAdapterPopularSeries = SeriesAdapter(popularSeries) {
+                activity.supportFragmentManager.fragments.clear()
                 activity.replaceFragment(
                     DetailsFragment2::class.java,
                     bundleOf(
