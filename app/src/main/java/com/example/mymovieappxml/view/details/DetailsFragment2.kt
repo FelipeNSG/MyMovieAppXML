@@ -112,7 +112,12 @@ class DetailsFragment2 : Fragment(R.layout.activity_main2) {
                                     getString(R.string.unknownTitle)
                             }
 
-                            binding.categoriesDescription.text = details._genres[0].name
+                            if (details._genres.isNotEmpty()){
+                                binding.categoriesDescription.text = details._genres[0].name
+                            } else {
+                                binding.categoriesDescription.text = getString(R.string.unknownTitle)
+                            }
+
                         }
 
                         binding.tagLineDescription.text = details._tagline
